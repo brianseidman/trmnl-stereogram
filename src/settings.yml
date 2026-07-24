@@ -1,0 +1,58 @@
+---
+strategy: webhook
+no_screen_padding: 'no'
+dark_mode: 'no'
+static_data: ''
+polling_verb: get
+framework_version: latest
+serverless_language: ''
+polling_url: ''
+polling_headers: ''
+polling_body: ''
+id: 378660
+oauth_enabled: 'false'
+oauth_pkce_enabled: 'no'
+oauth_authorize_url: ''
+oauth_token_url: ''
+oauth_scopes: ''
+oauth_scope_separator: ''
+oauth_refresh_url: ''
+oauth_auth_params: ''
+oauth_token_headers: ''
+oauth_token_site: ''
+oauth_token_params: ''
+oauth_token_request_auth_method: ''
+oauth_body_format: ''
+oauth_token_response_metadata: ''
+oauth_authorization_method: ''
+oauth_refresh_params: ''
+oauth_token_field_name: ''
+oauth_expiry_field_name: ''
+oauth_expiry_strategy: ''
+oauth_fixed_expiry_ms: ''
+custom_fields:
+- keyname: render_text
+  field_type: multi_string
+  name: Text to show
+  description: Enter one or more phrases and the stereogram will show one at random.
+  default: Stay focused
+  optional: true
+- keyname: show_title
+  field_type: boolean
+  default: true
+  name: Show title bar?
+  description: Turn this off to hide the title bar for a more "full screen" effect. This may help the stereogram render better.
+- keyname: author_bio
+  field_type: author_bio
+  name: About This Plugin
+  description: This plugin renders a stereogram (aka “Magic Eye") on your TRMNL!<br><br>Larger layouts can render text. You can even have your TRMNL choose from a list of phrases at random or use the webhook to send phrases to your TRMNL.<br><br>Due to size and resolution limitations, smaller layouts will render a random animal emoji.<br><br>Tips&#58; At least 2-bit depth is recommended. For the text, shorter phrases will render better than longer phrases. Or try solid shape emoji or ASCII symbols! (Even for layouts that render, stereogram visibility will be worse on smaller layouts like quadrants.)<br><br>The following layouts will render text&#58;<br>- OG full landscape<br>- OG full portrait<br>- X full landscape<br>- X full portrait<br>- X half-horizontal landscape<br>- X half-horizontal portrait<br>- X half-vertical landscape<br>- X quadrant landscape<br>- X quadrant portrait<br><br>The following layouts will render a random animal emoji&#58;<br>- OG half-horizontal portrait<br>- OG half-vertical landscape<br>- OG quadrant landscape<br>- OG quadrant portrait<br>- X half-vertical portrait<br><br>The following layouts are not active at this time&#58;<br>- OG half-horizontal landscape<br>- OG half-vertical portrait
+  help_text: Much thanks to <a href="https://tony-pizza.github.io/Stereogram.js/" class="underline">Stereogram.js</a> for the rendering backend.
+  category: art,images
+  github_url: https://github.com/brianseidman
+- keyname: webhook_url
+  field_type: copyable_webhook_url
+  name: Webhook URL
+  description: Use this webhook URL to send a phrase to the <b>render_text</b> variable and it will be added to the list of phrases. You can use this to send stereogram messages to your TRMNL from afar!
+  help_text: This will populate once the plugin has been created/saved. See <a href="https://docs.trmnl.com/go/private-plugins/webhooks" class="underline">the TRMNL webhook docs</a> for more information.
+name: Magic Eye Stereogram
+refresh_interval: 1440
