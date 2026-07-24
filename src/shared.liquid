@@ -1,0 +1,165 @@
+{%- assign text_webhook = render_text | default: '' -%}
+{%- assign text_webhook = text_webhook | remove: '[' | remove: ']' | remove: '"' | compact | join: ',' | strip -%}
+{%- assign text_form = trmnl.plugin_settings.custom_fields_values.render_text | default: '' | strip -%}
+
+{%- if text_webhook != '' and text_form != '' -%}
+  {%- assign combined = text_webhook | append: ',' | append: text_form -%}
+{%- elsif text_webhook != '' -%}
+  {%- assign combined = text_webhook -%}
+{%- elsif text_form != '' -%}
+  {%- assign combined = text_form -%}
+{%- else -%}
+  {%- assign combined = '' -%}
+{%- endif -%}
+
+{%- assign text_arr = combined | split: ',' -%}
+{%- assign display_selected_text = text_arr | sample | strip -%}
+
+{%- assign emoji = '🐵, 🐒, 🦍, 🦧, 🐶, 🐕, 🦮, 🐕‍🦺, 🐩, 🐺,  🦊, 🦝, 🐱, 🐈, 🐈‍⬛, 🦁, 🐯, 🐅, 🐆, 🐴,  🫎, 🫏, 🐎, 🦄, 🦓, 🦌, 🦬, 🐮, 🐂, 🐃,  🐄, 🐷, 🐖, 🐗, 🐽, 🐏, 🐑, 🐐, 🐪, 🐫,  🦙, 🦒, 🐘, 🦣, 🦏, 🦛, 🐭, 🐁, 🐀, 🐹,  🐰, 🐇, 🐿️, 🦫, 🦔, 🦇, 🐻, 🐻‍❄️, 🐨, 🐼,  🦥, 🦦, 🦨, 🦘, 🦡, 🦃, 🐔, 🐓, 🐣, 🐤,  🐥, 🐦, 🐧, 🕊️, 🦅, 🦆, 🦢, 🦉, 🦤, 🪶,  🦩, 🦚, 🦜, 🐦‍⬛, 🪿, 🐦‍🔥, 🐸, 🐊, 🐢,  🦎, 🐍, 🐲, 🐉, 🦕, 🦖, 🐳, 🐋, 🐬, 🦭,  🐟, 🐠, 🐡, 🦈, 🐙, 🐚, 🪸, 🪼, 🐌, 🦋,  🐛, 🐜, 🐝, 🪲, 🐞, 🦗, 🪳, 🕷️, 🦂, 🦟,  🪰, 🪱' -%}
+
+{%- assign emoji_arr = emoji | split: ',' -%}
+{%- assign display_selected_emoji = emoji_arr | sample | strip -%}
+
+<style>
+  .render-variant {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .render-variant--text {
+    display: block;
+  }
+
+  .render-variant--emoji {
+    display: none;
+  }
+
+  .screen--md:not(.screen--portrait) .view--full .render-variant--text,
+  .screen--md.screen--portrait .view--full .render-variant--text,
+  .screen--lg:not(.screen--portrait) .view--full .render-variant--text,
+  .screen--lg.screen--portrait .view--full .render-variant--text,
+  .screen--lg:not(.screen--portrait) .view--half_horizontal .render-variant--text,
+  .screen--lg.screen--portrait .view--half_horizontal .render-variant--text,
+  .screen--lg:not(.screen--portrait) .view--half_vertical .render-variant--text,
+  .screen--lg:not(.screen--portrait) .view--quadrant .render-variant--text,
+  .screen--lg.screen--portrait .view--quadrant .render-variant--text {
+    display: block;
+  }
+
+  .screen--md:not(.screen--portrait) .view--full .render-variant--emoji,
+  .screen--md.screen--portrait .view--full .render-variant--emoji,
+  .screen--lg:not(.screen--portrait) .view--full .render-variant--emoji,
+  .screen--lg.screen--portrait .view--full .render-variant--emoji,
+  .screen--lg:not(.screen--portrait) .view--half_horizontal .render-variant--emoji,
+  .screen--lg.screen--portrait .view--half_horizontal .render-variant--emoji,
+  .screen--lg:not(.screen--portrait) .view--half_vertical .render-variant--emoji,
+  .screen--lg:not(.screen--portrait) .view--quadrant .render-variant--emoji,
+  .screen--lg.screen--portrait .view--quadrant .render-variant--emoji {
+    display: none;
+  }
+
+  .screen--md:not(.screen--portrait) .view--half_vertical .render-variant--emoji,
+  .screen--md:not(.screen--portrait) .view--quadrant .render-variant--emoji,
+  .screen--md.screen--portrait .view--half_horizontal .render-variant--emoji,
+  .screen--md.screen--portrait .view--quadrant .render-variant--emoji,
+  .screen--lg.screen--portrait .view--half_vertical .render-variant--emoji {
+    display: block;
+  }
+
+  .screen--md:not(.screen--portrait) .view--half_vertical .render-variant--text,
+  .screen--md:not(.screen--portrait) .view--quadrant .render-variant--text,
+  .screen--md.screen--portrait .view--half_horizontal .render-variant--text,
+  .screen--md.screen--portrait .view--quadrant .render-variant--text,
+  .screen--lg.screen--portrait .view--half_vertical .render-variant--text {
+    display: none;
+  }
+
+  .hide--horizontal {
+    display: block;
+  }
+
+  .show--horizontal {
+    display: none;
+  }
+
+  .screen--md:not(.screen--portrait) .view--half_horizontal .hide--horizontal,
+  .screen--md.screen--portrait .view--half_vertical .hide--horizontal {
+    display: none;
+  }
+
+  .screen--md:not(.screen--portrait) .view--half_horizontal .show--horizontal,
+  .screen--md.screen--portrait .view--half_vertical .show--horizontal {
+    display: flex;
+  }
+
+  .trmnl .screen--md.screen--portrait .view--quadrant .title_bar .instance,
+  .trmnl .screen--md.screen--portrait .view--half_vertical .title_bar .instance {
+    display: none;
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/gh/tony-pizza/Stereogram.js@master/stereogram.js" type="text/javascript"></script>
+<script
+  src="https://cdn.jsdelivr.net/gh/tony-pizza/Stereogram.js@master/depthmappers/TextDepthMapper.js"
+  type="text/javascript"></script>
+
+<div class="render-variant render-variant--text" data-render-value="{{ display_selected_text | escape }}">{{ display_selected_text }}</div>
+<div class="render-variant render-variant--emoji" data-render-value="{{ display_selected_emoji | escape }}">{{ display_selected_emoji }}</div>
+
+<div class="layout layout--col layout--center">
+  <img class="image image-dither w--full h--full rounded hide--horizontal" id="stereogram" src="data:image/png;base64">
+  <div class="flex flex--col show--horizontal gap--large">
+    <div class="description description--large text--center  w--[80cqw]" data-pixel-perfect="true">
+      This plugin can't be rendered at this size due to a quirk in the JavaScript.
+    </div>
+    <div class="description description--large text--center" data-pixel-perfect="true">Sorry!</div>
+  </div>
+</div>
+
+{%- assign title = trmnl.plugin_settings.custom_fields_values.show_title | default: 'false' -%}
+
+{%- if title == 'true' -%}
+  <div class="title_bar">
+    <svg
+      viewBox="0 0 32 32"
+      enable-background="new 0 0 32 32"
+      id="Stock_cut"
+      version="1.1"
+      xml:space="preserve"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      class="image image-stroke--base">
+      <g><circle cx="16" cy="18" fill="none" r="3" stroke="currentColor" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><path d="M31,18c0,0-6-9-15-9   S1,18,1,18s6,9,15,9S31,18,31,18z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><line fill="none" stroke="currentColor" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="16" x2="16" y1="6" y2="2"/><line fill="none" stroke="currentColor" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="7" x2="4" y1="9" y2="6"/><line fill="none" stroke="currentColor" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="25" x2="28" y1="9" y2="6"/></g>
+    </svg>
+    {% assign instance_name = trmnl.plugin_settings.instance_name | default: 'Stereogram' %}
+    <span class="title">{{ instance_name }}</span>
+    <span class="instance">{{ display_selected_text }}</span>
+  </div>
+{%- endif -%}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const activeVariant = Array.from(document.querySelectorAll('.render-variant')).find(function (variant) {
+      return window.getComputedStyle(variant).display !== 'none';
+    });
+
+    const selectedDisplay = activeVariant ? activeVariant.getAttribute('data-render-value') || '' : '';
+    const titleInstance = document.querySelector('.title_bar .instance');
+
+    if (titleInstance && selectedDisplay) {
+      titleInstance.textContent = selectedDisplay;
+    }
+
+    if (selectedDisplay && window.Stereogram) {
+      Stereogram.render({
+        el: 'stereogram',
+        depthMapper: new Stereogram.TextDepthMapper(selectedDisplay),
+      });
+    }
+  });
+</script>
