@@ -37,6 +37,7 @@ custom_fields:
   description: Enter one or more phrases and the stereogram will show one at random.
   default: Stay focused
   optional: true
+  help_text: "Try \U0001F480❤️⭐"
 - keyname: show_title
   field_type: boolean
   default: true
